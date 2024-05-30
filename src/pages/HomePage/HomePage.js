@@ -1,59 +1,84 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Card, CardContent, Typography, Grid, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-
-const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [
-        {
-            label: 'Trainees',
-            data: [12, 19, 3, 5, 2, 3, 10, 15, 20, 25, 30, 35],
-            fill: false,
-            backgroundColor: 'rgb(75, 192, 192)',
-            borderColor: 'rgba(75, 192, 192, 0.2)',
-        },
-    ],
-};
-
-const HomePage = () => {
+const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees, activeTrainees, inactiveTrainees, assessments }) => {
     return (
         <div>
             <Typography variant="h4" gutterBottom>Dashboard</Typography>
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={4}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" gutterBottom>Total Trainees</Typography>
-                            <Typography variant="h5">32</Typography>
-                        </CardContent>
-                    </Card>
+                <Grid item xs={12} sm={8}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Membri Totali</Typography>
+                                    <Typography variant="h5">{totalMembers}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Membri Attivi</Typography>
+                                    <Typography variant="h5">{activeMembers}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Membri Inattivi</Typography>
+                                    <Typography variant="h5">{inactiveMembers}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Trainees Totali</Typography>
+                                    <Typography variant="h5">{totalTrainees}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Trainees Attivi</Typography>
+                                    <Typography variant="h5">{activeTrainees}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography color="textSecondary" gutterBottom>Trainees Inattivi</Typography>
+                                    <Typography variant="h5">{inactiveTrainees}</Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12} sm={4}>
                     <Card>
                         <CardContent>
-                            <Typography color="textSecondary" gutterBottom>Active Trainees</Typography>
-                            <Typography variant="h5">20</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" gutterBottom>Inactive Trainees</Typography>
-                            <Typography variant="h5">12</Typography>
+                            <Typography variant="h6" gutterBottom>Upcoming Assessments</Typography>
+                            {assessments.slice(0, 3).map(assessment => (
+                                <div key={assessment.id} style={{ marginBottom: '10px' }}>
+                                    <Typography variant="subtitle1">{assessment.name}</Typography>
+                                    <Typography variant="body2">{new Date(assessment.date).toLocaleDateString()}</Typography>
+                                    <Typography variant="body2">
+                                        {assessment.members.map(member => member.name).join(', ')}
+                                    </Typography>
+                                </div>
+                            ))}
+                            <Button variant="contained" color="primary" component={Link} to="/assessments" style={{ marginTop: '10px' }}>
+                                View All
+                            </Button>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
-            <Card style={{ marginTop: '20px' }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>Trainees</Typography>
-                    <Line data={data} />
-                </CardContent>
-            </Card>
         </div>
     );
 };

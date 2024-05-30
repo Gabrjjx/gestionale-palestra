@@ -2,17 +2,17 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, MenuItem, Select, FormControl } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const MembersList = ({ members, onUpdate, onDelete }) => {
-    const handleStatusChange = (member, status) => {
-        const updatedMember = { ...member, status };
-        onUpdate(updatedMember);
+const TraineesList = ({ trainees, onDelete, onUpdate }) => {
+    const handleStatusChange = (trainee, status) => {
+        const updatedTrainee = { ...trainee, status };
+        onUpdate(updatedTrainee);
     };
 
     return (
         <div>
-            <Typography variant="h4" gutterBottom>Members List</Typography>
-            <Button variant="contained" color="primary" component={Link} to="/add-member">
-                Aggiungi Membro
+            <Typography variant="h4" gutterBottom>Trainees List</Typography>
+            <Button variant="contained" color="primary" component={Link} to="/add-trainee">
+                Aggiungi Trainee
             </Button>
             <TableContainer component={Paper} style={{ marginTop: '20px' }}>
                 <Table>
@@ -26,16 +26,16 @@ const MembersList = ({ members, onUpdate, onDelete }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {members.map((member) => (
-                            <TableRow key={member.id}>
-                                <TableCell>{member.name}</TableCell>
-                                <TableCell>{member.phone}</TableCell>
-                                <TableCell>{member.gender}</TableCell>
+                        {trainees.map((trainee) => (
+                            <TableRow key={trainee.id}>
+                                <TableCell>{trainee.name}</TableCell>
+                                <TableCell>{trainee.phone}</TableCell>
+                                <TableCell>{trainee.gender}</TableCell>
                                 <TableCell>
                                     <FormControl fullWidth margin="normal">
                                         <Select
-                                            value={member.status}
-                                            onChange={(e) => handleStatusChange(member, e.target.value)}
+                                            value={trainee.status}
+                                            onChange={(e) => handleStatusChange(trainee, e.target.value)}
                                         >
                                             <MenuItem value="Active">Attivo</MenuItem>
                                             <MenuItem value="Inactive">Inattivo</MenuItem>
@@ -43,10 +43,10 @@ const MembersList = ({ members, onUpdate, onDelete }) => {
                                     </FormControl>
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="contained" color="primary" component={Link} to={`/member/${member.id}`}>
+                                    <Button variant="contained" color="primary" component={Link} to={`/trainee/${trainee.id}`}>
                                         Dettagli
                                     </Button>
-                                    <Button variant="contained" color="secondary" onClick={() => onDelete(member.id)} style={{ marginLeft: '10px' }}>
+                                    <Button variant="contained" color="secondary" onClick={() => onDelete(trainee.id)} style={{ marginLeft: '10px' }}>
                                         Elimina
                                     </Button>
                                 </TableCell>
@@ -59,4 +59,4 @@ const MembersList = ({ members, onUpdate, onDelete }) => {
     );
 };
 
-export default MembersList;
+export default TraineesList;
