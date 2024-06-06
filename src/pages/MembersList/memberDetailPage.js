@@ -1,58 +1,114 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Card, CardContent, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
 
-const MemberDetailPage = ({ members, onUpdate }) => {
-    const { id } = useParams();
-    const member = members.find(m => m.id === parseInt(id));
-    const [name, setName] = useState(member.name);
-    const [phone, setPhone] = useState(member.phone);
-    const [gender, setGender] = useState(member.gender);
-    const navigate = useNavigate();
+const EditMemberDialog = ({ open, onClose, member, onSave }) => {
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [gender, setGender] = useState('');
+    const [status, setStatus] = useState('');
+    const [verification, setVerification] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const updatedMember = { ...member, name, phone, gender };
-        onUpdate(updatedMember);
-        navigate('/members');
+    useEffect(() => {
+        if (member) {
+            setName(member.name);
+            setPhone(member.phone);
+            setEmail(member.email);
+            setGender(member.gender);
+            setStatus(member.status);
+            setVerification(member.verification);
+        }
+    }, [member]);
+
+    const handleSave = () => {
+        const updatedMember = {
+            ...member,
+            name,
+            phone,
+            email,
+            gender,
+            status,
+            verification,
+        };
+        onSave(updatedMember);
     };
 
     return (
-        <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: '100px' }}>
-            <CardContent>
-                <Typography variant="h5" gutterBottom>Modifica Membro</Typography>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="Nome"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                    />
-                    <TextField
-                        label="Telefono"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                    />
-                    <FormControl fullWidth margin="normal" required>
-                        <InputLabel>Genere</InputLabel>
-                        <Select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                        >
-                            <MenuItem value="Male">Maschio</MenuItem>
-                            <MenuItem value="Female">Femmina</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <Button type="submit" variant="contained" color="primary">Salva</Button>
-                </form>
-            </CardContent>
-        </Card>
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>Modifica Membro</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Modifica i dettagli del membro e salva le modifiche.
+                </DialogContentText>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Nome"
+                    type="text"
+                    fullWidth
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <TextField
+                    margin="dense"
+                    label="Telefono"
+                    type="text"
+                    fullWidth
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                />
+                <TextField
+                    margin="dense"
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <TextField
+                    margin="dense"
+                    label="Genere"
+                    select
+                    fullWidth
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                >
+                    <MenuItem value="Male">Maschio</MenuItem>
+                    <MenuItem value="Female">Femmina</MenuItem>
+                </TextField>
+                <TextField
+                    margin="dense"
+                    label="Status"
+                    select
+                    fullWidth
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                >
+                    <MenuItem value="Active">Attivo</MenuItem>
+                    <MenuItem value="Inactive">Inattivo</MenuItem>
+                </TextField>
+                <TextField
+                    margin="dense"
+                    label="Verifica"
+                    select
+                    fullWidth
+                    value={verification}
+                    onChange={(e) => setVerification(e.target.value)}
+                >
+                    <MenuItem value={true}>Verified</MenuItem>
+                    <MenuItem value={false}>Unverified</MenuItem>
+                </TextField>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    Annulla
+                </Button>
+                <Button onClick={handleSave} color="primary">
+                    Salva
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
-export default MemberDetailPage;
+export default EditMemberDialog;

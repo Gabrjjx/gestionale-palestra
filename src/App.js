@@ -10,7 +10,6 @@ import TraineeDetailPage from './pages/Trainees/TraineeDetailPage';
 import AssessmentsList from './pages/assesments/AssessmentsList';
 import AddAssessmentPage from './pages/assesments/AddAssessmentPage';
 import AssessmentDetailPage from './pages/assesments/AssessmentDetailPage';
-import LoginPage from './pages/LoginPage/LoginPage';
 import Sidebar from './components/Sidebar';
 import './App.css';
 
@@ -76,7 +75,6 @@ const App = () => {
             <Sidebar />
             <div style={{ flex: 1, padding: '20px' }}>
                 <Routes>
-                    <Route path="/login" element={<LoginPage />} />
                     <Route path="/members" element={<MembersList members={members} onUpdate={handleUpdateMember} onDelete={handleDeleteMember} />} />
                     <Route path="/add-member" element={<AddMemberPage onAdd={handleAddMember} />} />
                     <Route path="/member/:id" element={<MemberDetailPage members={members} onUpdate={handleUpdateMember} />} />
