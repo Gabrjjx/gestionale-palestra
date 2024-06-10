@@ -1,110 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const EditMemberDialog = ({ open, onClose, member, onSave }) => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [gender, setGender] = useState('');
-    const [status, setStatus] = useState('');
-    const [verification, setVerification] = useState(false);
+    const [editedMember, setEditedMember] = useState(member);
 
     useEffect(() => {
-        if (member) {
-            setName(member.name);
-            setPhone(member.phone);
-            setEmail(member.email);
-            setGender(member.gender);
-            setStatus(member.status);
-            setVerification(member.verification);
-        }
+        setEditedMember(member);
     }, [member]);
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditedMember({ ...editedMember, [name]: value });
+    };
+
     const handleSave = () => {
-        const updatedMember = {
-            ...member,
-            name,
-            phone,
-            email,
-            gender,
-            status,
-            verification,
-        };
-        onSave(updatedMember);
+        onSave(editedMember);
+        onClose();
     };
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Modifica Membro</DialogTitle>
+            <DialogTitle>Edit Member</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    Modifica i dettagli del membro e salva le modifiche.
-                </DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
-                    label="Nome"
+                    name="name"
+                    label="Name"
                     type="text"
                     fullWidth
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={editedMember.name}
+                    onChange={handleChange}
                 />
                 <TextField
                     margin="dense"
-                    label="Telefono"
-                    type="text"
-                    fullWidth
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                />
-                <TextField
-                    margin="dense"
+                    name="email"
                     label="Email"
                     type="email"
                     fullWidth
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={editedMember.email}
+                    onChange={handleChange}
                 />
                 <TextField
                     margin="dense"
-                    label="Genere"
-                    select
+                    name="phone"
+                    label="Phone"
+                    type="text"
                     fullWidth
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                >
-                    <MenuItem value="Male">Maschio</MenuItem>
-                    <MenuItem value="Female">Femmina</MenuItem>
-                </TextField>
+                    value={editedMember.phone}
+                    onChange={handleChange}
+                />
+                <FormControl fullWidth margin="dense">
+                    <InputLabel id="role-label">Role</InputLabel>
+                    <Select
+                        labelId="role-label"
+                        name="role"
+                        value={editedMember.role}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="General">General</MenuItem>
+                        <MenuItem value="Admin">Admin</MenuItem>
+                        <MenuItem value="Creator">Creator</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     margin="dense"
-                    label="Status"
-                    select
+                    name="projects"
+                    label="Projects"
+                    type="text"
                     fullWidth
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                >
-                    <MenuItem value="Active">Attivo</MenuItem>
-                    <MenuItem value="Inactive">Inattivo</MenuItem>
-                </TextField>
-                <TextField
-                    margin="dense"
-                    label="Verifica"
-                    select
-                    fullWidth
-                    value={verification}
-                    onChange={(e) => setVerification(e.target.value)}
-                >
-                    <MenuItem value={true}>Verified</MenuItem>
-                    <MenuItem value={false}>Unverified</MenuItem>
-                </TextField>
+                    value={editedMember.projects}
+                    onChange={handleChange}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
-                    Annulla
+                    Cancel
                 </Button>
                 <Button onClick={handleSave} color="primary">
-                    Salva
+                    Save
                 </Button>
             </DialogActions>
         </Dialog>
