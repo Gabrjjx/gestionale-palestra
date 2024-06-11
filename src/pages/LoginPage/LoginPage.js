@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { TextField, Button, Card, CardContent, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Username:', username);
-        console.log('Password:', password);
+        if (username === 'demo' && password === 'demo') {
+            onLogin();
+            navigate('/');
+        } else {
+            alert('Credenziali non valide');
+        }
     };
 
     return (

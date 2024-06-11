@@ -1,18 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import logo from '../Creami_gym_management_logo.jpg'; // Assicurati che il percorso sia corretto
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-const Sidebar = () => {
+const Sidebar = ({ onLogout }) => {
     return (
-        <div style={{ width: '240px', background: '#F4F4F4', height: '100vh', paddingTop: '20px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <img src={logo} alt="Company Logo" style={{ width: '100px', height: 'auto' }} />
-            </div>
+        <div>
+            <Typography variant="h6" align="center" gutterBottom>
+                Gym Management
+            </Typography>
             <List>
                 <ListItem button component={Link} to="/">
                     <ListItemIcon>
@@ -28,15 +26,15 @@ const Sidebar = () => {
                 </ListItem>
                 <ListItem button component={Link} to="/trainees">
                     <ListItemIcon>
-                        <FitnessCenterIcon />
+                        <GroupIcon />
                     </ListItemIcon>
                     <ListItemText primary="Trainees" />
                 </ListItem>
-                <ListItem button component={Link} to="/assessments">
+                <ListItem button onClick={onLogout}>
                     <ListItemIcon>
-                        <AssessmentIcon />
+                        <ExitToAppIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Assessments" />
+                    <ListItemText primary="Logout" />
                 </ListItem>
             </List>
         </div>
