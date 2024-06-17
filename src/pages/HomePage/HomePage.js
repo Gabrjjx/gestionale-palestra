@@ -1,70 +1,54 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, Grid, Button } from '@mui/material';
-import MembersList from '../MembersList/memberList';
-import TraineesList from '../Trainees/TraineesList';
-import EditMemberDialog from '../MembersList/memberDetailPage';
-import EditTraineeDialog from '../Trainees/TraineeDetailPage';
-import AddMemberDialog from '../MembersList/AddMemberDialog'; // Import the new AddMemberDialog component
+import React, { useEffect, useState } from 'react';
+import { Grid, Card, CardContent, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 
-const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees, activeTrainees, inactiveTrainees, assessments }) => {
-    const [members, setMembers] = useState([
-        { id: 1, name: 'John Doe', phone: '123-456-7890', email: 'john@example.com', gender: 'Male', status: 'Active', verification: true, avatar: 'path/to/avatar1.jpg' },
-        { id: 2, name: 'Jane Smith', phone: '987-654-3210', email: 'jane@example.com', gender: 'Female', status: 'Inactive', verification: false, avatar: 'path/to/avatar2.jpg' },
-    ]);
+const HomePage = ({ members, trainees, assessments }) => {
+    const [memberData, setMemberData] = useState([]);
+    const [traineeData, setTraineeData] = useState([]);
+    const [assessmentData, setAssessmentData] = useState([]);
 
-    const [trainees, setTrainees] = useState([
-        { id: 1, name: 'Alice Brown', phone: '555-555-5555', email: 'alice@example.com', gender: 'Female', status: 'Active', verification: true, avatar: 'path/to/avatar3.jpg' },
-        { id: 2, name: 'Bob Green', phone: '444-444-4444', email: 'bob@example.com', gender: 'Male', status: 'Inactive', verification: false, avatar: 'path/to/avatar4.jpg' },
-    ]);
+    useEffect(() => {
+        setMemberData(members);
+        setTraineeData(trainees);
+        setAssessmentData(assessments);
+    }, [members, trainees, assessments]);
 
-    const [selectedMember, setSelectedMember] = useState(null);
-    const [selectedTrainee, setSelectedTrainee] = useState(null);
-    const [isEditMemberDialogOpen, setEditMemberDialogOpen] = useState(false);
-    const [isEditTraineeDialogOpen, setEditTraineeDialogOpen] = useState(false);
-    const [isAddMemberDialogOpen, setAddMemberDialogOpen] = useState(false); // State for AddMemberDialog
+    const totalMembers = memberData.length;
+    const activeMembers = memberData.filter(member => member.status === 'Active').length;
+    const inactiveMembers = memberData.filter(member => member.status === 'Inactive').length;
 
-    const handleEditMember = (member) => {
-        setSelectedMember(member);
-        setEditMemberDialogOpen(true);
-    };
+    const totalTrainees = traineeData.length;
+    const activeTrainees = traineeData.filter(trainee => trainee.status === 'Active').length;
+    const inactiveTrainees = traineeData.filter(trainee => trainee.status === 'Inactive').length;
 
-    const handleDeleteMember = (member) => {
-        setMembers(members.filter(m => m.id !== member.id));
-    };
+    const data = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [
+        {
+            label: 'Trainees',
+            data: traineeData.map((trainee, index) => index + 1), // Adjust with real data
+            fill: false,
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+        },
+    ],
+};
 
-    const handleEditTrainee = (trainee) => {
-        setSelectedTrainee(trainee);
-        setEditTraineeDialogOpen(true);
-    };
-
-    const handleDeleteTrainee = (trainee) => {
-        setTrainees(trainees.filter(t => t.id !== trainee.id));
-    };
-
-    const handleSaveMember = (updatedMember) => {
-        setMembers(members.map(member => (member.id === updatedMember.id ? updatedMember : member)));
-        setEditMemberDialogOpen(false);
-    };
-
-    const handleSaveTrainee = (updatedTrainee) => {
-        setTrainees(trainees.map(trainee => (trainee.id === updatedTrainee.id ? updatedTrainee : trainee)));
-        setEditTraineeDialogOpen(false);
-    };
-
-    const handleAddMember = (newMember) => {
-        setMembers([...members, newMember]);
-        setAddMemberDialogOpen(false);
+    const options = {
+        scales: {
+            y: {
+                beginAtZero: true,
+            },
+        },
     };
 
     return (
-        <div style={{ flex: 1, padding: '20px' }}>
-            <Typography variant="h4" className="dashboard-title">Dashboard</Typography>
-            <Button variant="contained" color="primary" onClick={() => setAddMemberDialogOpen(true)}>
-                Add New Member
-            </Button>
+        <div style={{ flexGrow: 1, padding: '20px' }}>
+            <Typography variant="h4" gutterBottom>Dashboard</Typography>
             <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#f0f8ff' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Membri Totali</Typography>
                             <Typography variant="h5">{totalMembers}</Typography>
@@ -72,7 +56,7 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#e0f7fa' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Membri Attivi</Typography>
                             <Typography variant="h5">{activeMembers}</Typography>
@@ -80,7 +64,7 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#ffe0b2' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Membri Inattivi</Typography>
                             <Typography variant="h5">{inactiveMembers}</Typography>
@@ -88,7 +72,7 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#f0f8ff' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Trainees Totali</Typography>
                             <Typography variant="h5">{totalTrainees}</Typography>
@@ -96,7 +80,7 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#e0f7fa' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Trainees Attivi</Typography>
                             <Typography variant="h5">{activeTrainees}</Typography>
@@ -104,7 +88,7 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Card className="card" style={{ backgroundColor: '#ffe0b2' }}>
+                    <Card>
                         <CardContent>
                             <Typography color="textSecondary" gutterBottom>Trainees Inattivi</Typography>
                             <Typography variant="h5">{inactiveTrainees}</Typography>
@@ -112,10 +96,10 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                     </Card>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                    <Card className="card" style={{ backgroundColor: '#e3f2fd' }}>
+                    <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>Prossimi Assessments</Typography>
-                            {assessments.slice(0, 3).map(assessment => (
+                            {assessmentData.slice(0, 3).map(assessment => (
                                 <div key={assessment.id} style={{ marginBottom: '10px' }}>
                                     <Typography variant="subtitle1">{assessment.name}</Typography>
                                     <Typography variant="body2">{new Date(assessment.date).toLocaleDateString()}</Typography>
@@ -130,34 +114,35 @@ const HomePage = ({ totalMembers, activeMembers, inactiveMembers, totalTrainees,
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12}>
-                    <MembersList members={members} onEdit={handleEditMember} onDelete={handleDeleteMember} />
+                <Grid item xs={12} md={4}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>Trainees</Typography>
+                            <Line data={data} options={options} />
+                        </CardContent>
+                    </Card>
                 </Grid>
                 <Grid item xs={12}>
-                    <TraineesList trainees={trainees} onEdit={handleEditTrainee} onDelete={handleDeleteTrainee} />
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>Lista Trainees</Typography>
+                            <List>
+                                {traineeData.slice(0, 4).map(trainee => (
+                                    <ListItem key={trainee.id}>
+                                        <ListItemAvatar>
+                                            <Avatar>{trainee.name.charAt(0)}</Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={trainee.name}
+                                            secondary={`${trainee.phone} - ${trainee.gender} - ${trainee.status}`}
+                                        />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </CardContent>
+                    </Card>
                 </Grid>
             </Grid>
-            {selectedMember && (
-                <EditMemberDialog
-                    open={isEditMemberDialogOpen}
-                    onClose={() => setEditMemberDialogOpen(false)}
-                    member={selectedMember}
-                    onSave={handleSaveMember}
-                />
-            )}
-            {selectedTrainee && (
-                <EditTraineeDialog
-                    open={isEditTraineeDialogOpen}
-                    onClose={() => setEditTraineeDialogOpen(false)}
-                    trainee={selectedTrainee}
-                    onSave={handleSaveTrainee}
-                />
-            )}
-            <AddMemberDialog
-                open={isAddMemberDialogOpen}
-                onClose={() => setAddMemberDialogOpen(false)}
-                onSave={handleAddMember}
-            />
         </div>
     );
 };

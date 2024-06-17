@@ -1,68 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Card, CardContent, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { TextField, Button, Paper, Typography } from '@mui/material';
 
 const TraineeDetailPage = ({ trainees, onUpdate }) => {
     const { id } = useParams();
-    const trainee = trainees.find(t => t.id === parseInt(id));
-    const [name, setName] = useState(trainee.name);
-    const [phone, setPhone] = useState(trainee.phone);
-    const [gender, setGender] = useState(trainee.gender);
-    const [status, setStatus] = useState(trainee.status);
     const navigate = useNavigate();
+    const [trainee, setTrainee] = useState(null);
+
+    useEffect(() => {
+        const traineeData = trainees.find(t => t.id === parseInt(id));
+        if (traineeData) {
+            setTrainee(traineeData);
+        }
+    }, [id, trainees]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setTrainee(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const updatedTrainee = { ...trainee, name, phone, gender, status };
-        onUpdate(updatedTrainee);
+        onUpdate(trainee);
         navigate('/trainees');
     };
 
+    if (!trainee) return <Typography>Loading...</Typography>;
+
     return (
-        <Card style={{ maxWidth: 400, margin: '0 auto', marginTop: '100px' }}>
-            <CardContent>
-                <Typography variant="h5" gutterBottom>Modifica Trainee</Typography>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="Nome"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                    />
-                    <TextField
-                        label="Telefono"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                    />
-                    <FormControl fullWidth margin="normal" required>
-                        <InputLabel>Genere</InputLabel>
-                        <Select
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                        >
-                            <MenuItem value="Male">Maschio</MenuItem>
-                            <MenuItem value="Female">Femmina</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth margin="normal" required>
-                        <InputLabel>Stato</InputLabel>
-                        <Select
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                        >
-                            <MenuItem value="Active">Attivo</MenuItem>
-                            <MenuItem value="Inactive">Inattivo</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <Button type="submit" variant="contained" color="primary">Salva</Button>
-                </form>
-            </CardContent>
-        </Card>
+        <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6">Modifica Trainee</Typography>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    label="Nome"
+                    name="name"
+                    value={trainee.name}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Telefono"
+                    name="phone"
+                    value={trainee.phone}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Email"
+                    name="email"
+                    value={trainee.email}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Genere"
+                    name="gender"
+                    value={trainee.gender}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Status"
+                    name="status"
+                    value={trainee.status}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <Button type="submit" variant="contained" color="primary">Salva</Button>
+            </form>
+        </Paper>
     );
 };
 

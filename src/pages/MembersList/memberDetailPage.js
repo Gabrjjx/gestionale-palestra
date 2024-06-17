@@ -1,88 +1,83 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { TextField, Button, Paper, Typography } from '@mui/material';
 
-const EditMemberDialog = ({ open, onClose, member, onSave }) => {
-    const [editedMember, setEditedMember] = useState(member);
+const MemberDetailPage = ({ members, onUpdate }) => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [member, setMember] = useState(null);
 
     useEffect(() => {
-        setEditedMember(member);
-    }, [member]);
+        const memberData = members.find(m => m.id === parseInt(id));
+        if (memberData) {
+            setMember(memberData);
+        }
+    }, [id, members]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditedMember({ ...editedMember, [name]: value });
+        setMember(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
-    const handleSave = () => {
-        onSave(editedMember);
-        onClose();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onUpdate(member);
+        navigate('/members');
     };
+
+    if (!member) return <Typography>Loading...</Typography>;
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Edit Member</DialogTitle>
-            <DialogContent>
+        <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6">Modifica Membro</Typography>
+            <form onSubmit={handleSubmit}>
                 <TextField
-                    autoFocus
-                    margin="dense"
+                    label="Nome"
                     name="name"
-                    label="Name"
-                    type="text"
-                    fullWidth
-                    value={editedMember.name}
+                    value={member.name}
                     onChange={handleChange}
+                    fullWidth
+                    margin="normal"
                 />
                 <TextField
-                    margin="dense"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    value={editedMember.email}
-                    onChange={handleChange}
-                />
-                <TextField
-                    margin="dense"
+                    label="Telefono"
                     name="phone"
-                    label="Phone"
-                    type="text"
-                    fullWidth
-                    value={editedMember.phone}
+                    value={member.phone}
                     onChange={handleChange}
+                    fullWidth
+                    margin="normal"
                 />
-                <FormControl fullWidth margin="dense">
-                    <InputLabel id="role-label">Role</InputLabel>
-                    <Select
-                        labelId="role-label"
-                        name="role"
-                        value={editedMember.role}
-                        onChange={handleChange}
-                    >
-                        <MenuItem value="General">General</MenuItem>
-                        <MenuItem value="Admin">Admin</MenuItem>
-                        <MenuItem value="Creator">Creator</MenuItem>
-                    </Select>
-                </FormControl>
                 <TextField
-                    margin="dense"
-                    name="projects"
-                    label="Projects"
-                    type="text"
-                    fullWidth
-                    value={editedMember.projects}
+                    label="Email"
+                    name="email"
+                    value={member.email}
                     onChange={handleChange}
+                    fullWidth
+                    margin="normal"
                 />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={handleSave} color="primary">
-                    Save
-                </Button>
-            </DialogActions>
-        </Dialog>
+                <TextField
+                    label="Genere"
+                    name="gender"
+                    value={member.gender}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Status"
+                    name="status"
+                    value={member.status}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <Button type="submit" variant="contained" color="primary">Salva</Button>
+            </form>
+        </Paper>
     );
 };
 
-export default EditMemberDialog;
+export default MemberDetailPage;

@@ -1,91 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Card, CardContent, Typography, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
+import { Paper, Typography, TextField, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
-const AssessmentDetailPage = ({ assessments, onUpdate, members, trainees }) => {
+const AssessmentDetailPage = ({ assessments, members, trainees, onUpdate }) => {
     const { id } = useParams();
-    const assessment = assessments.find(a => a.id === parseInt(id));
-    const [name, setName] = useState(assessment.name);
-    const [date, setDate] = useState(assessment.date);
-    const [selectedMembers, setSelectedMembers] = useState(assessment.members.map(member => member.id));
-    const [organizer, setOrganizer] = useState(assessment.organizer.id);
     const navigate = useNavigate();
+    const [assessment, setAssessment] = useState(null);
+
+    useEffect(() => {
+        const assessmentData = assessments.find(a => a.id === parseInt(id));
+        if (assessmentData) {
+            setAssessment(assessmentData);
+        }
+    }, [id, assessments]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setAssessment(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleMembersChange = (e) => {
+        const value = Array.from(e.target.selectedOptions, option => option.value);
+        setAssessment(prevState => ({
+            ...prevState,
+            members: value.map(id => members.find(m => m.id === parseInt(id)))
+        }));
+    };
+
+    const handleTraineesChange = (e) => {
+        const value = Array.from(e.target.selectedOptions, option => option.value);
+        setAssessment(prevState => ({
+            ...prevState,
+            trainees: value.map(id => trainees.find(t => t.id === parseInt(id)))
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const updatedAssessment = {
-            ...assessment,
-            name,
-            date,
-            members: selectedMembers.map(id => members.find(member => member.id === id)),
-            organizer: trainees.find(trainee => trainee.id === organizer),
-        };
-        onUpdate(updatedAssessment);
+        onUpdate(assessment);
         navigate('/assessments');
     };
 
-    const handleMemberChange = (event) => {
-        setSelectedMembers(event.target.value);
-    };
+    if (!assessment) return <Typography>Loading...</Typography>;
 
     return (
-        <Card style={{ maxWidth: 600, margin: '0 auto', marginTop: '100px' }}>
-            <CardContent>
-                <Typography variant="h5" gutterBottom>Modifica Assessment</Typography>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="Nome"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                    />
-                    <TextField
-                        label="Data"
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                        InputLabelProps={{
-                            shrink: true,
+        <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6">Modifica Assessment</Typography>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    label="Nome"
+                    name="name"
+                    value={assessment.name}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Data"
+                    type="date"
+                    name="date"
+                    value={assessment.date}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
+                <FormControl fullWidth margin="normal">
+                    <InputLabel>Membri</InputLabel>
+                    <Select
+                        multiple
+                        native
+                        value={assessment.members ? assessment.members.map(m => m.id) : []}
+                        onChange={handleMembersChange}
+                        inputProps={{
+                            id: 'select-multiple-members',
                         }}
-                    />
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel>Membri</InputLabel>
-                        <Select
-                            multiple
-                            value={selectedMembers}
-                            onChange={handleMemberChange}
-                            renderValue={(selected) => selected.map(id => members.find(member => member.id === id).name).join(', ')}
-                        >
-                            {members.map((member) => (
-                                <MenuItem key={member.id} value={member.id}>
-                                    <Checkbox checked={selectedMembers.indexOf(member.id) > -1} />
-                                    <ListItemText primary={member.name} />
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth margin="normal" required>
-                        <InputLabel>Organizzatore</InputLabel>
-                        <Select
-                            value={organizer}
-                            onChange={(e) => setOrganizer(e.target.value)}
-                        >
-                            {trainees.map((trainee) => (
-                                <MenuItem key={trainee.id} value={trainee.id}>
-                                    {trainee.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Button type="submit" variant="contained" color="primary">Salva</Button>
-                </form>
-            </CardContent>
-        </Card>
+                    >
+                        {members.map(member => (
+                            <option key={member.id} value={member.id}>
+                                {member.name}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                    <InputLabel>Trainees</InputLabel>
+                    <Select
+                        multiple
+                        native
+                        value={assessment.trainees ? assessment.trainees.map(t => t.id) : []}
+                        onChange={handleTraineesChange}
+                        inputProps={{
+                            id: 'select-multiple-trainees',
+                        }}
+                    >
+                        {trainees.map(trainee => (
+                            <option key={trainee.id} value={trainee.id}>
+                                {trainee.name}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+                <Button type="submit" variant="contained" color="primary">Salva</Button>
+            </form>
+        </Paper>
     );
 };
 

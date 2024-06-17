@@ -1,52 +1,39 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const AssessmentsList = ({ assessments, onDelete }) => {
+const AssessmentsList = ({ assessments }) => {
+    const navigate = useNavigate();
+
+    const handleViewDetails = (id) => {
+        navigate(`/assessment/${id}`);
+    };
+
     return (
-        <div>
-            <Typography variant="h4" gutterBottom>Assessments List</Typography>
-            <Button variant="contained" color="primary" component={Link} to="/add-assessment">
-                Aggiungi Assessment
-            </Button>
-            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Nome</TableCell>
-                            <TableCell>Data</TableCell>
-                            <TableCell>Membri</TableCell>
-                            <TableCell>Organizzatore</TableCell>
-                            <TableCell>Azioni</TableCell>
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Nome</TableCell>
+                        <TableCell>Data</TableCell>
+                        <TableCell>Organizzatore</TableCell>
+                        <TableCell>Azioni</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {assessments.map(assessment => (
+                        <TableRow key={assessment.id}>
+                            <TableCell>{assessment.name}</TableCell>
+                            <TableCell>{new Date(assessment.date).toLocaleDateString()}</TableCell>
+                            <TableCell>{assessment.organizer.name}</TableCell>
+                            <TableCell>
+                                <Button onClick={() => handleViewDetails(assessment.id)}>Dettagli</Button>
+                            </TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {assessments.map((assessment) => (
-                            <TableRow key={assessment.id}>
-                                <TableCell>{assessment.name}</TableCell>
-                                <TableCell>{new Date(assessment.date).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <ul>
-                                        {assessment.members.map(member => (
-                                            <li key={member.id}>{member.name}</li>
-                                        ))}
-                                    </ul>
-                                </TableCell>
-                                <TableCell>{assessment.organizer.name}</TableCell>
-                                <TableCell>
-                                    <Button variant="contained" color="primary" component={Link} to={`/assessment/${assessment.id}`}>
-                                        Dettagli
-                                    </Button>
-                                    <Button variant="contained" color="secondary" onClick={() => onDelete(assessment.id)} style={{ marginLeft: '10px' }}>
-                                        Elimina
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </div>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 };
 
